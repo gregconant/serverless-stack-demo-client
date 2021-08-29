@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { API, input } from "aws-amplify";
 import { Link } from "react-router-dom";
-import { BsPencilSquare, BsSearch } from "react-icons/bs";
+import { BsFillCaretRightFill, BsPencilSquare, BsSearch } from "react-icons/bs";
 import ListGroup from "react-bootstrap/ListGroup";
 import { LinkContainer } from "react-router-bootstrap";
+import LoaderButton from "../components/LoaderButton";
 import { useAppContext } from "../libs/contextLib";
 import { onError } from "../libs/errorLib";
 import "./Home.css";
@@ -11,6 +12,8 @@ import "./Home.css";
 export default function Home() {
   const [notes, setNotes] = useState([]);
   const [filterString, setFilterString] = useState("");
+  const [originalText, setOriginalText] = useState("");
+  const [replacementText, setReplacementText] = useState("");
   const { isAuthenticated } = useAppContext();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,6 +38,10 @@ export default function Home() {
 
   function loadNotes() {
     return API.get("notes", "/notes");
+  }
+
+  function replaceNoteText() {
+    console.log("replacing " + originalText + " with " + replacementText);
   }
 
   function renderNotesList(notes) {
@@ -71,6 +78,29 @@ export default function Home() {
               </ListGroup.Item>
             </LinkContainer>
           ))}
+        <div>
+          <h3 className="pb-3 mt-4 mb-3 border-bottom">
+            Replace text in notes
+          </h3>
+          <div>
+            <span>Replace </span>
+            <input
+              type="text"
+              value={originalText}
+              onChange={(e) => setOriginalText(e.target.value)}
+            />{" "}
+            <span>with</span>
+            <input
+              type="text"
+              value={replacementText}
+              onChange={(e) => setReplacementText(e.target.value)}
+            />
+            <span>in all notes</span>
+            <LoaderButton onClick={replaceNoteText} isLoading={isLoading}>
+              Go <BsFillCaretRightFill />
+            </LoaderButton>
+          </div>
+        </div>
       </>
     );
   }
