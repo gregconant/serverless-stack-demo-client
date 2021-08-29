@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { BsFillCaretRightFill, BsPencilSquare, BsSearch } from "react-icons/bs";
 import ListGroup from "react-bootstrap/ListGroup";
 import { LinkContainer } from "react-router-bootstrap";
+import { Form, Container, Row, InputGroup } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import { useAppContext } from "../libs/contextLib";
 import { onError } from "../libs/errorLib";
@@ -79,27 +80,37 @@ export default function Home() {
             </LinkContainer>
           ))}
         <div>
-          <h3 className="pb-3 mt-4 mb-3 border-bottom">
-            Replace text in notes
-          </h3>
-          <div>
-            <span>Replace </span>
-            <input
-              type="text"
-              value={originalText}
-              onChange={(e) => setOriginalText(e.target.value)}
-            />{" "}
-            <span>with</span>
-            <input
-              type="text"
-              value={replacementText}
-              onChange={(e) => setReplacementText(e.target.value)}
-            />
-            <span>in all notes</span>
-            <LoaderButton onClick={replaceNoteText} isLoading={isLoading}>
-              Go <BsFillCaretRightFill />
-            </LoaderButton>
-          </div>
+          <Container fluid="md">
+            <Row>
+              <h3 className="pb-3 mt-4 mb-3 border-bottom">
+                Replace text in all notes
+              </h3>
+            </Row>
+            <Row>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  size="sm"
+                  placeholder="Find"
+                  value={originalText}
+                  onChange={(e) => setOriginalText(e.target.value)}
+                />{" "}
+                <InputGroup.Text>with</InputGroup.Text>
+                <Form.Control
+                  size="sm"
+                  placeholder="Replace"
+                  value={replacementText}
+                  onChange={(e) => setReplacementText(e.target.value)}
+                />
+                <LoaderButton
+                  size="sm"
+                  onClick={replaceNoteText}
+                  isLoading={isLoading}
+                >
+                  Go <BsFillCaretRightFill />
+                </LoaderButton>
+              </InputGroup>
+            </Row>
+          </Container>
         </div>
       </>
     );
