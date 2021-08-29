@@ -41,8 +41,19 @@ export default function Home() {
     return API.get("notes", "/notes");
   }
 
-  function replaceNoteText() {
-    console.log("replacing " + originalText + " with " + replacementText);
+  function replaceNoteText(note) {
+    console.log(note);
+    console.log(
+      "replacing " + note.content + " with " + replacementText + " in " + note
+    );
+    return API.put("notes", "/notes/" + note.noteId);
+  }
+
+  function replaceAllNoteText() {
+    setIsLoading(true);
+    notes.forEach((note) => replaceNoteText(note));
+    loadNotes();
+    setIsLoading(false);
   }
 
   function renderNotesList(notes) {
@@ -103,8 +114,11 @@ export default function Home() {
                 />
                 <LoaderButton
                   size="sm"
-                  onClick={replaceNoteText}
+                  onClick={!isLoading ? replaceAllNoteText : null}
                   isLoading={isLoading}
+                  disabled={
+                    isLoading && originalText === "" && replacementText === ""
+                  }
                 >
                   Go <BsFillCaretRightFill />
                 </LoaderButton>
