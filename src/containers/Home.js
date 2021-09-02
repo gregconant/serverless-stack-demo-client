@@ -50,9 +50,8 @@ export default function Home() {
     return API.put("notes", "/notes/" + note.noteId, newContent);
   }
 
-  async function replaceAllNoteText() {
-    isLoading = true;
-    setIsLoading(isLoading);
+  function replaceAllNoteText() {
+    setIsLoading(true);
     console.log("isLoading: " + isLoading);
     let updatePromises = notes.map(replaceNoteText);
     Promise.all(updatePromises)
@@ -60,8 +59,7 @@ export default function Home() {
         loadNotes().then((notes) => setNotes(notes));
       })
       .then(() => {
-        isLoading = false;
-        setIsLoading(isLoading);
+        setIsLoading(false);
       });
     //await loadNotes();
     console.log("isLoading: " + isLoading);
@@ -101,6 +99,13 @@ export default function Home() {
               </ListGroup.Item>
             </LinkContainer>
           ))}
+      </>
+    );
+  }
+
+  function renderReplaceTextControls() {
+    return (
+      <>
         <div>
           <Container fluid="md">
             <Row>
@@ -125,13 +130,15 @@ export default function Home() {
                 />
                 <LoaderButton
                   size="sm"
+                  variant="primary"
                   onClick={!isLoading ? replaceAllNoteText : null}
                   isLoading={isLoading}
                   disabled={
                     isLoading && (originalText === "" || replacementText === "")
                   }
                 >
-                  Go <BsFillCaretRightFill />
+                  {isLoading ? "Loading" : "Replace"}
+                  <BsFillCaretRightFill />
                 </LoaderButton>
               </InputGroup>
             </Row>
@@ -163,6 +170,7 @@ export default function Home() {
       <div className="notes">
         <h2 className="pb-3 mt-4 mb-3 border-bottom">Your Notes</h2>
         <ListGroup>{!isLoading && renderNotesList(notes)}</ListGroup>
+        {renderReplaceTextControls()}
       </div>
     );
   }
