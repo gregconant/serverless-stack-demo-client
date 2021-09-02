@@ -41,19 +41,30 @@ export default function Home() {
     return API.get("notes", "/notes");
   }
 
-  function replaceNoteText(note) {
-    console.log(note);
-    console.log(
-      "replacing " + note.content + " with " + replacementText + " in " + note
-    );
-    return API.put("notes", "/notes/" + note.noteId);
+  async function replaceNoteText(note) {
+    let newContent = {
+      body: {
+        content: note.content.replace(originalText, replacementText),
+      },
+    };
+    return API.put("notes", "/notes/" + note.noteId, newContent);
   }
 
-  function replaceAllNoteText() {
-    setIsLoading(true);
-    notes.forEach((note) => replaceNoteText(note));
-    loadNotes();
-    setIsLoading(false);
+  async function replaceAllNoteText() {
+    isLoading = true;
+    setIsLoading(isLoading);
+    console.log("isLoading: " + isLoading);
+    let updatePromises = notes.map(replaceNoteText);
+    Promise.all(updatePromises)
+      .then(() => {
+        loadNotes().then((notes) => setNotes(notes));
+      })
+      .then(() => {
+        isLoading = false;
+        setIsLoading(isLoading);
+      });
+    //await loadNotes();
+    console.log("isLoading: " + isLoading);
   }
 
   function renderNotesList(notes) {
@@ -117,7 +128,7 @@ export default function Home() {
                   onClick={!isLoading ? replaceAllNoteText : null}
                   isLoading={isLoading}
                   disabled={
-                    isLoading && originalText === "" && replacementText === ""
+                    isLoading && (originalText === "" || replacementText === "")
                   }
                 >
                   Go <BsFillCaretRightFill />
