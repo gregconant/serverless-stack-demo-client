@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { API, input } from "aws-amplify";
 import { Link } from "react-router-dom";
-import { BsFillCaretRightFill, BsPencilSquare, BsSearch } from "react-icons/bs";
+import {
+  BsArrowRepeat,
+  BsFillCaretRightFill,
+  BsPencilSquare,
+  BsSearch,
+} from "react-icons/bs";
 import ListGroup from "react-bootstrap/ListGroup";
 import { LinkContainer } from "react-router-bootstrap";
 import { Form, Container, Row, InputGroup } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
+import Spinner from "../components/Spinner";
 import { useAppContext } from "../libs/contextLib";
 import { onError } from "../libs/errorLib";
 import "./Home.css";
@@ -50,9 +56,14 @@ export default function Home() {
     return API.put("notes", "/notes/" + note.noteId, newContent);
   }
 
+<<<<<<< Updated upstream
   function replaceAllNoteText() {
     setIsLoading(true);
     console.log("isLoading: " + isLoading);
+=======
+  async function replaceAllNoteText() {
+    setIsLoading(true);
+>>>>>>> Stashed changes
     let updatePromises = notes.map(replaceNoteText);
     Promise.all(updatePromises)
       .then(() => {
@@ -61,8 +72,6 @@ export default function Home() {
       .then(() => {
         setIsLoading(false);
       });
-    //await loadNotes();
-    console.log("isLoading: " + isLoading);
   }
 
   function renderNotesList(notes) {
@@ -102,10 +111,17 @@ export default function Home() {
       </>
     );
   }
+<<<<<<< Updated upstream
 
   function renderReplaceTextControls() {
     return (
       <>
+=======
+  function renderReplaceTextControls() {
+    return (
+      <>
+        {isLoading ? <Spinner /> : ""}
+>>>>>>> Stashed changes
         <div>
           <Container fluid="md">
             <Row>
@@ -134,11 +150,15 @@ export default function Home() {
                   onClick={!isLoading ? replaceAllNoteText : null}
                   isLoading={isLoading}
                   disabled={
-                    isLoading && (originalText === "" || replacementText === "")
+                    isLoading || originalText === "" || replacementText === ""
                   }
                 >
+<<<<<<< Updated upstream
                   {isLoading ? "Loading" : "Replace"}
                   <BsFillCaretRightFill />
+=======
+                  Go
+>>>>>>> Stashed changes
                 </LoaderButton>
               </InputGroup>
             </Row>
