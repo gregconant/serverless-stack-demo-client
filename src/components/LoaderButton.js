@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import { BsArrowRepeat } from "react-icons/bs";
+import Spinner from "./Spinner";
 import "./LoaderButton.css";
 
 export default function LoaderButton({
@@ -15,7 +15,7 @@ export default function LoaderButton({
       className={`LoaderButton ${className}`}
       {...props}
     >
-      {isLoading && <BsArrowRepeat className="spinning" />}
+      {isLoading && <Spinner />}
       {props.children}
     </Button>
   );

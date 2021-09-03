@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { API, input } from "aws-amplify";
 import { Link } from "react-router-dom";
-import { BsFillCaretRightFill, BsPencilSquare, BsSearch } from "react-icons/bs";
+import { BsPencilSquare, BsSearch } from "react-icons/bs";
 import ListGroup from "react-bootstrap/ListGroup";
 import { LinkContainer } from "react-router-bootstrap";
 import { Form, Container, Row, InputGroup } from "react-bootstrap";
