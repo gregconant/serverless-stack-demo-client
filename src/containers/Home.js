@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { API, input } from "aws-amplify";
 import { Link } from "react-router-dom";
-import { BsFillCaretRightFill, BsPencilSquare, BsSearch } from "react-icons/bs";
+import { BsPencilSquare, BsSearch } from "react-icons/bs";
 import ListGroup from "react-bootstrap/ListGroup";
 import { LinkContainer } from "react-router-bootstrap";
 import { Form, Container, Row, InputGroup } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
+import Spinner from "../components/Spinner";
 import { useAppContext } from "../libs/contextLib";
 import { onError } from "../libs/errorLib";
 import "./Home.css";
@@ -51,20 +52,15 @@ export default function Home() {
   }
 
   async function replaceAllNoteText() {
-    isLoading = true;
-    setIsLoading(isLoading);
-    console.log("isLoading: " + isLoading);
+    setIsLoading(true);
     let updatePromises = notes.map(replaceNoteText);
     Promise.all(updatePromises)
       .then(() => {
         loadNotes().then((notes) => setNotes(notes));
       })
       .then(() => {
-        isLoading = false;
-        setIsLoading(isLoading);
+        setIsLoading(false);
       });
-    //await loadNotes();
-    console.log("isLoading: " + isLoading);
   }
 
   function renderNotesList(notes) {
@@ -101,6 +97,14 @@ export default function Home() {
               </ListGroup.Item>
             </LinkContainer>
           ))}
+      </>
+    );
+  }
+
+  function renderReplaceTextControls() {
+    return (
+      <>
+        {isLoading ? <Spinner /> : ""}
         <div>
           <Container fluid="md">
             <Row>
@@ -125,13 +129,14 @@ export default function Home() {
                 />
                 <LoaderButton
                   size="sm"
+                  variant="primary"
                   onClick={!isLoading ? replaceAllNoteText : null}
                   isLoading={isLoading}
                   disabled={
-                    isLoading && (originalText === "" || replacementText === "")
+                    isLoading || originalText === "" || replacementText === ""
                   }
                 >
-                  Go <BsFillCaretRightFill />
+                  Replace
                 </LoaderButton>
               </InputGroup>
             </Row>
@@ -163,6 +168,7 @@ export default function Home() {
       <div className="notes">
         <h2 className="pb-3 mt-4 mb-3 border-bottom">Your Notes</h2>
         <ListGroup>{!isLoading && renderNotesList(notes)}</ListGroup>
+        {renderReplaceTextControls()}
       </div>
     );
   }

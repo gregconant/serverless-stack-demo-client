@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import { API, Storage } from "aws-amplify";
 import { useParams, useHistory } from "react-router-dom";
 import LoaderButton from "../components/LoaderButton";
+import Spinner from "../components/Spinner";
 import { onError } from "../libs/errorLib";
 import { s3Upload } from "../libs/awsLib";
 import config from "../config";
@@ -24,6 +25,7 @@ export default function Notes() {
 
     async function onLoad() {
       try {
+        setIsLoading(true);
         const note = await loadNote();
         const { content, attachment } = note;
 
@@ -33,6 +35,7 @@ export default function Notes() {
 
         setContent(content);
         setNote(note);
+        setIsLoading(false);
       } catch (e) {
         onError(e);
       }
@@ -55,7 +58,7 @@ export default function Notes() {
 
   function saveNote(note) {
     return API.put("notes", `/notes/${id}`, {
-      body: note
+      body: note,
     });
   }
 
@@ -82,7 +85,7 @@ export default function Notes() {
 
       await saveNote({
         content,
-        attachment: attachment || note.attachment
+        attachment: attachment || note.attachment,
       });
       history.push("/");
     } catch (e) {
@@ -119,49 +122,53 @@ export default function Notes() {
 
   return (
     <div className="Notes">
-      {note && (
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="content">
-            <Form.Control
-              as="textarea"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="file">
-            <Form.Label>Attachment</Form.Label>
-            {note.attachment && (
-              <p>
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={note.attachmentURL}
-                >
-                  {formatFilename(note.attachment)}
-                </a>
-              </p>
-            )}
-            <Form.Control onChange={handleFileChange} type="file" />
-          </Form.Group>
-          <LoaderButton
-            block
-            size="lg"
-            type="submit"
-            isLoading={isLoading}
-            disabled={!validateForm()}
-          >
-            Save
-          </LoaderButton>
-          <LoaderButton
-            block
-            size="lg"
-            variant="danger"
-            onClick={handleDelete}
-            isLoading={isDeleting}
-          >
-            Delete
-          </LoaderButton>
-        </Form>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        note && (
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="content">
+              <Form.Control
+                as="textarea"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="file">
+              <Form.Label>Attachment</Form.Label>
+              {note.attachment && (
+                <p>
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={note.attachmentURL}
+                  >
+                    {formatFilename(note.attachment)}
+                  </a>
+                </p>
+              )}
+              <Form.Control onChange={handleFileChange} type="file" />
+            </Form.Group>
+            <LoaderButton
+              block
+              size="lg"
+              type="submit"
+              isLoading={isLoading}
+              disabled={!validateForm()}
+            >
+              Save
+            </LoaderButton>
+            <LoaderButton
+              block
+              size="lg"
+              variant="danger"
+              onClick={handleDelete}
+              isLoading={isDeleting}
+            >
+              Delete
+            </LoaderButton>
+          </Form>
+        )
       )}
     </div>
   );
